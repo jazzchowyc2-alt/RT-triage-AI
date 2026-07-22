@@ -73,7 +73,7 @@ if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得�
         with st.chat_message("assistant"):
             try:
                 response = client.chat.completions.create(
-                    model="google/gemini-2.0-flash-lite-preview-02-05:free", 
+                    model="meta-llama/llama-3.3-70b-instruct:free", 
                     messages=api_messages,
                     temperature=0.2 
                 )
