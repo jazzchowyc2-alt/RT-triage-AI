@@ -69,19 +69,19 @@ if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得�
         [SYSTEM REMINDER: You MUST use the exact template. You MUST check if the symptom makes anatomical sense for the {treatment_site} treatment site. If it does NOT make sense, point it out in the 🗣️ section in Cantonese.]"""
         
         api_messages = st.session_state.messages[:-1] + [{"role": "user", "content": strict_reminder}]
-   
-with st.chat_message("assistant"):
-                try:
-                    response = client.chat.completions.create(
-                        model="google/gemini-2.0-flash-lite-preview-02-05:free", 
-                        messages=api_messages,
-                        temperature=0.2 
-                    )
-                    bot_reply = response.choices[0].message.content
-                    st.markdown(bot_reply)
-                    
-                    st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+        
+        with st.chat_message("assistant"):
+            try:
+                response = client.chat.completions.create(
+                    model="google/gemini-2.0-flash-lite-preview-02-05:free", 
+                    messages=api_messages,
+                    temperature=0.2 
+                )
+                bot_reply = response.choices[0].message.content
+                st.markdown(bot_reply)
+                
+                st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
-                except Exception as e:
-                    # This will print the exact reason OpenRouter is rejecting us
-                    st.error(f"⚠️ API Error: {e}")
+            except Exception as e:
+                # This will print the exact reason OpenRouter is rejecting us
+                st.error(f"⚠️ API Error: {e}")
