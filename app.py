@@ -71,10 +71,10 @@ if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得�
         api_messages = st.session_state.messages[:-1] + [{"role": "user", "content": strict_reminder}]
         
         with st.chat_message("assistant"):
-            response = client.chat.completions.create(
-                model="openrouter/free", 
+           response = client.chat.completions.create(
+                model="google/gemini-2.0-flash-lite-preview-02-05:free", 
                 messages=api_messages,
-                temperature=0.2 
+                temperature=0.2
             )
             bot_reply = response.choices[0].message.content
             st.markdown(bot_reply)
