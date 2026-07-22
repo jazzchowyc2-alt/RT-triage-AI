@@ -82,6 +82,6 @@ with st.chat_message("assistant"):
                     
                     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
-except Exception as e:
+                except Exception as e:
                     # This will print the exact reason OpenRouter is rejecting us
                     st.error(f"⚠️ API Error: {e}")
