@@ -81,6 +81,7 @@ with st.chat_message("assistant"):
                     st.markdown(bot_reply)
                     
                     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-                    
-                except Exception as e:
-                    st.error("⚠️ The triage assistant is currently busy handling other requests. Please wait a moment and try again.")
+
+except Exception as e:
+                    # This will print the exact reason OpenRouter is rejecting us
+                    st.error(f"⚠️ API Error: {e}")
