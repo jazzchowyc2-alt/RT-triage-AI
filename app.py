@@ -52,7 +52,7 @@ for msg in st.session_state.messages:
 # 5. Handle user input
 if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得好犀利呀')"):
     if treatment_site == "Not selected":
-        st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us.")
+        st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us. You may choose it by pressing the >> at left upper corner.")
     else:
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
