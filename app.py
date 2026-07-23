@@ -108,7 +108,6 @@ elif page == "📖 What to Expect":
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
     # Injecting massive custom CSS to override Streamlit's default layout
-    # Notice the background-image URLs are dynamically injecting your local photos
     st.markdown(f"""
         <style>
         /* Force edge-to-edge layout */
