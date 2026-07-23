@@ -101,8 +101,8 @@ elif page == "📖 What to Expect":
     st.markdown('<p class="title-text">Radiotherapy.<br>Demystified.</p>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle-text">Profound precision. Designed for your healing.</p>', unsafe_allow_html=True)
     
-    # 👇 PASTE YOUR MAIN HERO IMAGE HERE
-    st.image("Radiotherapist.png", use_container_width=True)
+    # Hero Image
+    st.image("image/Radiotherapist.png", use_container_width=True)
     st.divider()
 
     # --- STEP 1: SIMULATION ---
@@ -120,8 +120,8 @@ elif page == "📖 What to Expect":
         st.subheader("🧍 Pelvis")
         st.write("A Vac-Lok Cushion (a vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.")
 
-    # 👇 PASTE YOUR MASK/SIMULATION IMAGE HERE
-    st.image("Simulation.png", caption="Thermoplastic Mask Immobilization", use_container_width=True)
+    # Simulation Image
+    st.image("image/Simulation.png", caption="Radiation Therapy Simulation & Setup", use_container_width=True)
     st.divider()
 
     # --- STEP 2: PLANNING ---
@@ -136,16 +136,16 @@ elif page == "📖 What to Expect":
         st.subheader("📐 Dosimetry")
         st.write("Using supercomputers, we calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.")
 
-    # 👇 PASTE YOUR TPS/PLANNING SCREEN IMAGE HERE
-    st.image("Planning.png", caption="Treatment Planning System", use_container_width=True)
+    # Planning Image
+    st.image("image/Planning.png", caption="Treatment Planning System", use_container_width=True)
     st.divider()
 
     # --- STEP 3: VERIFICATION ---
     st.markdown('<p class="section-header">Step 3: Verification</p>', unsafe_allow_html=True)
     st.markdown('<p class="body-text">Before the treatment beam even turns on, we perform a vital safety check right inside the treatment room using Image-Guided Precision.</p>', unsafe_allow_html=True)
     
-    # 👇 PASTE YOUR CBCT/VERIFICATION IMAGE HERE
-    st.image("CBCT.png", caption="Daily Image Guidance", use_container_width=True)
+    # Verification/CBCT Image
+    st.image("image/CBCT.png", caption="Daily Image Guidance", use_container_width=True)
     st.divider()
 
     # --- STEP 4: TREATMENT ---
@@ -160,5 +160,5 @@ elif page == "📖 What to Expect":
         st.subheader("🌀 TomoTherapy")
         st.write("Delivering radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution for complex treatment areas.")
 
-    # 👇 PASTE YOUR LINAC/TOMO IMAGE HERE
-    st.image("tomo.png", caption="Varian TrueBeam Linear Accelerator", use_container_width=True)
+    # Treatment Machine Image
+    st.image("image/tomo.png", caption="Advanced Delivery Systems", use_container_width=True)
