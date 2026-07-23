@@ -73,7 +73,6 @@ if page == "💬 Triage Assistant":
         if treatment_site == "Not selected":
             st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us.")
         else:
-            st.session_test.messages.append({"role": "user", "content": user_input}) if "messages" in st.session_state else None
             st.session_state.messages.append({"role": "user", "content": user_input})
             with st.chat_message("user"):
                 st.markdown(user_input)
@@ -100,28 +99,23 @@ if page == "💬 Triage Assistant":
 # ==========================================
 elif page == "📖 What to Expect":
     
-    # Pre-load local images from the 'image' folder into base64 format for CSS
+    # Pre-load local images from the 'image' folder into base64 format
     img_hero = get_base64_of_bin_file("image/Radiotherapist.png")
     img_sim = get_base64_of_bin_file("image/Simulation.png")
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # CSS Template using safe .format() injection to avoid f-string bracket errors
-    css_template = """
+    # Global CSS injection without formatting conflicts
+    st.markdown("""
         <style>
-        .block-container {{
+        .block-container {
             padding: 0rem !important;
             max-width: 100% !important;
-        }}
-        header {{visibility: hidden;}}
-        footer {{visibility: hidden;}}
+        }
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
 
-        .parallax-hero {{ background-image: url("data:image/png;base64,{}"); }}
-        .parallax-sim {{ background-image: url("data:image/png;base64,{}"); }}
-        .parallax-plan {{ background-image: url("data:image/png;base64,{}"); }}
-        .parallax-treat {{ background-image: url("data:image/png;base64,{}"); }}
-
-        .parallax-section {{
+        .parallax-section {
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
@@ -134,39 +128,37 @@ elif page == "📖 What to Expect":
             padding: 40px 20px;
         }
 
-        .overlay {{
+        .overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.75);
             z-index: 1;
-        }}
+        }
 
-        .content {{
+        .content {
             position: relative;
             z-index: 2;
             text-align: center;
             color: white;
             padding: 20px;
             max-width: 1000px;
-        }}
-        .apple-title {{ font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }}
-        .apple-subtitle {{ font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }}
-        .apple-body {{ font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }}
+        }
+        .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .apple-subtitle { font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
+        .apple-body { font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }
         
-        .grid-container {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }}
-        .grid-box {{ background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }}
-        .grid-title {{ font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }}
-        .grid-text {{ font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }}
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }
+        .grid-box { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
+        .grid-title { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }
+        .grid-text { font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }
         
-        @media (max-width: 768px) {{ .apple-title {{ font-size: 3rem; }} }}
+        @media (max-width: 768px) { .apple-title { font-size: 3rem; } }
         </style>
-    """
-    
-    st.markdown(css_template.format(img_hero, img_sim, img_plan, img_treat), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     # HERO SECTION
-    st.markdown("""
-        <div class="parallax-section parallax-hero">
+    st.markdown(f"""
+        <div class="parallax-section" style="background-image: url('data:image/png;base64,{img_hero}');">
             <div class="overlay" style="background: rgba(0,0,0,0.5);"></div>
             <div class="content">
                 <div class="apple-title">Radiotherapy.<br>Demystified.</div>
@@ -177,8 +169,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # SIMULATION SECTION
-    st.markdown("""
-        <div class="parallax-section parallax-sim">
+    st.markdown(f"""
+        <div class="parallax-section" style="background-image: url('data:image/png;base64,{img_sim}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">Step 1: The Blueprint</div>
@@ -204,8 +196,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # PLANNING SECTION
-    st.markdown("""
-        <div class="parallax-section parallax-plan">
+    st.markdown(f"""
+        <div class="parallax-section" style="background-image: url('data:image/png;base64,{img_plan}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">Step 2: The Algorithm</div>
@@ -227,8 +219,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # TREATMENT SECTION
-    st.markdown("""
-        <div class="parallax-section parallax-treat">
+    st.markdown(f"""
+        <div class="parallax-section" style="background-image: url('data:image/png;base64,{img_treat}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">Step 3: The Treatment</div>
