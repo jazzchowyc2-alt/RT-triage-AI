@@ -83,62 +83,59 @@ if page == "💬 Triage Assistant":
                     st.error(f"⚠️ API Error: {e}")
 
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (Cinematic Parallax)
+# PAGE 2: WHAT TO EXPECT (Cinematic Parallax with Local Photos)
 # ==========================================
 elif page == "📖 What to Expect":
-    # Injecting massive custom CSS to override Streamlit's default layout
-    st.markdown("""
-        <style>
-        /* Remove Streamlit's default padding to allow edge-to-edge images */
-        .block-container {
-            padding: 0rem !important;
-            max-width: 100% !important;
-        }
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
+    import base64
 
-        /* The Parallax Magic */
-        .parallax {
-            /* Create the fixed scrolling effect */
+    # Function to load local images for the CSS background
+    def get_base64_image(image_path):
+        try:
+            with open(image_path, "rb") as img_file:
+                return base64.b64encode(img_file.read()).decode()
+        except FileNotFoundError:
+            return "" # Failsafe if the image isn't found yet
+
+    # UPDATE THESE FILE PATHS TO YOUR LOCAL PHOTOS
+    hero_img_base64 = get_base64_image("images/hksh_linac.jpg") 
+    sim_img_base64 = get_base64_image("images/hksh_ct_sim.jpg")
+    plan_img_base64 = get_base64_image("images/tps_screen.jpg")
+    treat_img_base64 = get_base64_image("images/hksh_linac.jpg")
+
+    st.markdown(f"""
+        <style>
+        .block-container {{ padding: 0rem !important; max-width: 100% !important; }}
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+
+        .parallax {{
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-            
-            /* Make each section take the full screen height */
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-        }
-
-        /* Dark overlay so the white text is readable */
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+        }}
+        .overlay {{
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1;
-        }
-
-        /* Apple-style typography */
-        .content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: white;
-            padding: 20px;
-            max-width: 900px;
-        }
-        .apple-title { font-size: 5rem; font-weight: 700; letter-spacing: -0.1rem; line-height: 1.1; margin-bottom: 20px;}
-        .apple-subtitle { font-size: 2rem; font-weight: 500; color: #f5f5f7; margin-bottom: 30px;}
-        .apple-body { font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #d2d2d7;}
+        }}
+        .content {{
+            position: relative; z-index: 2; text-align: center; color: white; padding: 20px; max-width: 900px;
+        }}
+        .apple-title {{ font-size: 5rem; font-weight: 700; letter-spacing: -0.1rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);}}
+        .apple-subtitle {{ font-size: 2rem; font-weight: 500; color: #f5f5f7; margin-bottom: 30px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5);}}
+        .apple-body {{ font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #e5e5ea; text-shadow: 1px 1px 5px rgba(0,0,0,0.5);}}
         </style>
     """, unsafe_allow_html=True)
 
     # HERO SECTION
-    st.markdown("""
-        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000');">
+    st.markdown(f"""
+        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{hero_img_base64}');">
             <div class="overlay" style="background: rgba(0,0,0,0.7);"></div>
             <div class="content">
                 <div class="apple-title">Radiotherapy.</div>
@@ -150,8 +147,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # SIMULATION SECTION
-    st.markdown("""
-        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=2000');">
+    st.markdown(f"""
+        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{sim_img_base64}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">1. The Blueprint</div>
@@ -162,8 +159,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # PLANNING SECTION
-    st.markdown("""
-        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000');">
+    st.markdown(f"""
+        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{plan_img_base64}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">2. The Algorithm</div>
@@ -174,8 +171,8 @@ elif page == "📖 What to Expect":
     """, unsafe_allow_html=True)
 
     # TREATMENT SECTION
-    st.markdown("""
-        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000');">
+    st.markdown(f"""
+        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{treat_img_base64}');">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">3. The Delivery</div>
