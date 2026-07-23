@@ -1,9 +1,8 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from openai import OpenAI
 
 # 1. Setup the web page
-st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="wide")
+st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
 
 # 2. Navigation Sidebar
 with st.sidebar:
@@ -84,153 +83,82 @@ if page == "💬 Triage Assistant":
                     st.error(f"⚠️ API Error: {e}")
 
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (Cinematic Parallax)
+# PAGE 2: WHAT TO EXPECT (Native Streamlit Layout)
 # ==========================================
 elif page == "📖 What to Expect":
     
-    # We use st.components.v1.html to create a true HTML/CSS environment. 
-    # High-quality Unsplash medical tech URLs are used because they bypass Streamlit blocking.
-    html_code = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <style>
-        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #000; }
-        .parallax {
-            background-attachment: fixed; background-position: center;
-            background-repeat: no-repeat; background-size: cover;
-            min-height: 100vh; display: flex; align-items: center;
-            justify-content: center; position: relative; padding: 60px 20px;
-        }
-        .overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75); z-index: 1;
-        }
-        .content {
-            position: relative; z-index: 2; text-align: center; color: white; max-width: 1000px; width: 100%;
-        }
-        .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);}
-        .apple-subtitle { font-size: 1.5rem; font-weight: 600; color: #2997ff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1rem;}
-        .apple-body { font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px;}
-        
-        .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px;
-        }
-        .grid-box {
-            background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .grid-title { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }
-        .grid-text { font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }
-        
-        @media (max-width: 768px) {
-            .apple-title { font-size: 3rem; }
-        }
-    </style>
-    </head>
-    <body>
+    # Clean, native typography sizing
+    st.markdown("""
+        <style>
+        .title-text { font-size: 3.5rem; font-weight: 700; text-align: center; margin-bottom: 0; line-height: 1.2; }
+        .subtitle-text { font-size: 1.5rem; font-weight: 500; text-align: center; color: #0071e3; margin-bottom: 40px; }
+        .section-header { font-size: 2.5rem; font-weight: 600; margin-top: 50px; margin-bottom: 10px; }
+        .body-text { font-size: 1.1rem; line-height: 1.6; color: #d2d2d7; margin-bottom: 20px;}
+        </style>
+    """, unsafe_allow_html=True)
 
-    <!-- HERO SECTION -->
-    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2000');">
-        <div class="overlay" style="background: rgba(0,0,0,0.5);"></div>
-        <div class="content">
-            <div class="apple-title">Radiotherapy. Demystified.</div>
-            <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
-            <div class="apple-body">Scroll down to explore the complete clinical workflow behind your treatment journey.</div>
-        </div>
-    </div>
-
-    <!-- STEP 1: SIMULATION -->
-    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=2000');">
-        <div class="overlay"></div>
-        <div class="content">
-            <div class="apple-subtitle">Step 1: The Blueprint</div>
-            <div class="apple-title">Locked in. Comfortably.</div>
-            <div class="apple-body">Before treatment, we map your anatomy using advanced PCCT, MR, or PET/CT simulators. To ensure millimeter-perfect accuracy, we use custom immobilization devices tailored to you:</div>
-            
-            <div class="grid-container">
-                <div class="grid-box">
-                    <div class="grid-title">👤 Head & Neck</div>
-                    <div class="grid-text">A warm, mesh-like <b>Thermoplastic Mask</b> is molded over your face and shoulders. It hardens in minutes, keeping you perfectly still to protect critical nearby structures.</div>
-                </div>
-                <div class="grid-box">
-                    <div class="grid-title">🫁 Breast & Thorax</div>
-                    <div class="grid-text">You will rest on a customized <b>Breast/Wing Board</b> with your arms safely positioned above your head, exposing the treatment area while stabilizing your lungs.</div>
-                </div>
-                <div class="grid-box">
-                    <div class="grid-title">🧍 Pelvis & Prostate</div>
-                    <div class="grid-text">A <b>Vac-Lok Cushion</b> (a medical-grade vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis every single day.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- STEP 2: PLANNING -->
-    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000');">
-        <div class="overlay"></div>
-        <div class="content">
-            <div class="apple-subtitle">Step 2: The Algorithm</div>
-            <div class="apple-title">Invisible math. Maximum impact.</div>
-            <div class="apple-body">Behind the scenes, your clinical oncologists and dosimetrists construct a highly customized 3D plan.</div>
-            
-            <div class="grid-container">
-                <div class="grid-box">
-                    <div class="grid-title">🎯 Contouring</div>
-                    <div class="grid-text">Doctors meticulously draw exact boundaries on your scans, separating the target tumor volume from the critical Organs at Risk (OARs) nearby.</div>
-                </div>
-                <div class="grid-box">
-                    <div class="grid-title">📐 Dosimetry</div>
-                    <div class="grid-text">Using powerful supercomputers, we calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- STEP 3: VERIFICATION -->
-    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&q=80&w=2000');">
-        <div class="overlay"></div>
-        <div class="content">
-            <div class="apple-subtitle">Step 3: The Verification</div>
-            <div class="apple-title">Image-Guided Precision.</div>
-            <div class="apple-body">Before the treatment beam even turns on, we perform a vital safety check right inside the treatment room.</div>
-            
-            <div class="grid-container">
-                <div class="grid-box">
-                    <div class="grid-title">📷 Daily CBCT Scans</div>
-                    <div class="grid-text">We take a quick 3D X-ray (Cone Beam CT) while you are lying on the bed. The radiation therapists compare this live image against your original Step 1 Blueprint.</div>
-                </div>
-                <div class="grid-box">
-                    <div class="grid-title">📏 Micro-Adjustments</div>
-                    <div class="grid-text">Internal organs shift naturally. The robotic bed will shift by fractions of a millimeter to ensure the tumor is perfectly aligned with the machine's crosshairs.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- STEP 4: THE TREATMENT -->
-    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000');">
-        <div class="overlay"></div>
-        <div class="content">
-            <div class="apple-subtitle">Step 4: The Treatment</div>
-            <div class="apple-title">The right tool for the target.</div>
-            <div class="apple-body">You will not feel, see, or smell the radiation. It is completely painless. Depending on your specific plan, we use one of our advanced delivery systems:</div>
-            
-            <div class="grid-container">
-                <div class="grid-box">
-                    <div class="grid-title">🚀 Linear Accelerator (Linac)</div>
-                    <div class="grid-text"><b>The Workhorse.</b> The open, rotating arm moves seamlessly around you. Using VMAT technology, it sculpts radiation beams to the 3D shape of the tumor in just a few minutes. Fast and highly versatile.</div>
-                </div>
-                <div class="grid-box">
-                    <div class="grid-title">🌀 TomoTherapy</div>
-                    <div class="grid-text"><b>The Spiral Specialist.</b> Delivering radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution, making it exceptionally powerful for complex or large treatment areas.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    </body>
-    </html>
-    """
+    # --- HERO SECTION ---
+    st.markdown('<p class="title-text">Radiotherapy.<br>Demystified.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle-text">Profound precision. Designed for your healing.</p>', unsafe_allow_html=True)
     
-    # Render the full HTML code in a scrolling iframe
-    components.html(html_code, height=3500, scrolling=True)
+    # 👇 PASTE YOUR MAIN HERO IMAGE HERE
+    st.image("Radiotherapist.png", use_container_width=True)
+    st.divider()
+
+    # --- STEP 1: SIMULATION ---
+    st.markdown('<p class="section-header">Step 1: The Blueprint</p>', unsafe_allow_html=True)
+    st.markdown('<p class="body-text">Before treatment, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy, we use custom immobilization devices tailored to you.</p>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.subheader("👤 Head & Neck")
+        st.write("A warm, mesh-like Thermoplastic Mask is molded over your face and shoulders. It hardens in minutes, keeping you perfectly still.")
+    with col2:
+        st.subheader("🫁 Breast & Thorax")
+        st.write("You will rest on a customized Breast/Wing Board with your arms safely positioned above your head, exposing the treatment area.")
+    with col3:
+        st.subheader("🧍 Pelvis")
+        st.write("A Vac-Lok Cushion (a vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.")
+
+    # 👇 PASTE YOUR MASK/SIMULATION IMAGE HERE
+    st.image("Simulation.png", caption="Thermoplastic Mask Immobilization", use_container_width=True)
+    st.divider()
+
+    # --- STEP 2: PLANNING ---
+    st.markdown('<p class="section-header">Step 2: The Algorithm</p>', unsafe_allow_html=True)
+    st.markdown('<p class="body-text">Behind the scenes, your clinical oncologists and dosimetrists construct a highly customized 3D plan.</p>', unsafe_allow_html=True)
+    
+    col4, col5 = st.columns(2)
+    with col4:
+        st.subheader("🎯 Contouring")
+        st.write("Doctors meticulously draw exact boundaries on your scans, separating the target tumor volume from the critical organs nearby.")
+    with col5:
+        st.subheader("📐 Dosimetry")
+        st.write("Using supercomputers, we calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.")
+
+    # 👇 PASTE YOUR TPS/PLANNING SCREEN IMAGE HERE
+    st.image("Planning.png", caption="Treatment Planning System", use_container_width=True)
+    st.divider()
+
+    # --- STEP 3: VERIFICATION ---
+    st.markdown('<p class="section-header">Step 3: Verification</p>', unsafe_allow_html=True)
+    st.markdown('<p class="body-text">Before the treatment beam even turns on, we perform a vital safety check right inside the treatment room using Image-Guided Precision.</p>', unsafe_allow_html=True)
+    
+    # 👇 PASTE YOUR CBCT/VERIFICATION IMAGE HERE
+    st.image("CBCT.png", caption="Daily Image Guidance", use_container_width=True)
+    st.divider()
+
+    # --- STEP 4: TREATMENT ---
+    st.markdown('<p class="section-header">Step 4: The Treatment</p>', unsafe_allow_html=True)
+    st.markdown('<p class="body-text">You will not feel, see, or smell the radiation. It is completely painless. Depending on your specific plan, we use one of our advanced delivery systems:</p>', unsafe_allow_html=True)
+    
+    col6, col7 = st.columns(2)
+    with col6:
+        st.subheader("🚀 Linear Accelerator (Linac)")
+        st.write("The open, rotating arm moves seamlessly around you. Using VMAT technology, it sculpts radiation beams to the 3D shape of the tumor in just a few minutes.")
+    with col7:
+        st.subheader("🌀 TomoTherapy")
+        st.write("Delivering radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution for complex treatment areas.")
+
+    # 👇 PASTE YOUR LINAC/TOMO IMAGE HERE
+    st.image("tomo.png", caption="Varian TrueBeam Linear Accelerator", use_container_width=True)
