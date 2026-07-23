@@ -11,7 +11,7 @@ with st.sidebar:
     st.markdown("---")
 
 # ==========================================
-# PAGE 1: THE TRIAGE ASSISTANT (Your existing code)
+# PAGE 1: THE TRIAGE ASSISTANT
 # ==========================================
 if page == "💬 Triage Assistant":
     st.title("🚑 「幫緊你幫緊你」Symptom Translator")
@@ -83,54 +83,104 @@ if page == "💬 Triage Assistant":
                     st.error(f"⚠️ API Error: {e}")
 
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (The "Apple" Page)
+# PAGE 2: WHAT TO EXPECT (Cinematic Parallax)
 # ==========================================
 elif page == "📖 What to Expect":
-    # Custom CSS to mimic Apple's clean, centered typography
+    # Injecting massive custom CSS to override Streamlit's default layout
     st.markdown("""
         <style>
-        .apple-title { text-align: center; font-size: 3.5rem; font-weight: 700; margin-bottom: 0px; padding-bottom: 0px; letter-spacing: -0.05rem;}
-        .apple-subtitle { text-align: center; font-size: 1.5rem; color: #86868b; font-weight: 400; margin-top: 5px; margin-bottom: 50px;}
-        .section-header { font-size: 2rem; font-weight: 600; margin-bottom: 10px; }
-        .section-text { font-size: 1.1rem; color: #555555; line-height: 1.6; }
+        /* Remove Streamlit's default padding to allow edge-to-edge images */
+        .block-container {
+            padding: 0rem !important;
+            max-width: 100% !important;
+        }
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+
+        /* The Parallax Magic */
+        .parallax {
+            /* Create the fixed scrolling effect */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            
+            /* Make each section take the full screen height */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Dark overlay so the white text is readable */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* Apple-style typography */
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            max-width: 900px;
+        }
+        .apple-title { font-size: 5rem; font-weight: 700; letter-spacing: -0.1rem; line-height: 1.1; margin-bottom: 20px;}
+        .apple-subtitle { font-size: 2rem; font-weight: 500; color: #f5f5f7; margin-bottom: 30px;}
+        .apple-body { font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #d2d2d7;}
         </style>
     """, unsafe_allow_html=True)
 
-    # Hero Section
-    st.markdown('<p class="apple-title">Radiotherapy. Demystified.</p>', unsafe_allow_html=True)
-    st.markdown('<p class="apple-subtitle">Profound precision. Designed for your healing.</p>', unsafe_allow_html=True)
-    
-    st.image("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000", caption="The Journey Ahead", use_container_width=True)
-    st.write("---")
+    # HERO SECTION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000');">
+            <div class="overlay" style="background: rgba(0,0,0,0.7);"></div>
+            <div class="content">
+                <div class="apple-title">Radiotherapy.</div>
+                <div class="apple-title" style="color: #0071e3;">Demystified.</div>
+                <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
+                <div class="apple-body">Scroll down to explore your journey.</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # Section 1: Simulation (Text Left, Image Right)
-    col1, col2 = st.columns([1.2, 1], gap="large")
-    with col1:
-        st.markdown('<p class="section-header">1. The Blueprint (Simulation)</p>', unsafe_allow_html=True)
-        st.markdown('<p class="section-text">Before treatment begins, we create a flawless map of your anatomy. Depending on your specific needs, we utilize advanced simulators—such as Photon-Counting CT (PCCT), MR, or PET/CT—to capture high-resolution, multi-dimensional imagery.</p>', unsafe_allow_html=True)
-        st.markdown('<p class="section-text">You will lie still while a custom immobilization device (like a thermoplastic mask) is gently molded to your body. This ensures millimeter-perfect accuracy every single day.</p>', unsafe_allow_html=True)
-    with col2:
-        # Placeholder for a sleek CT scanner image
-        st.image("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800", use_container_width=True)
+    # SIMULATION SECTION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=2000');">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">1. The Blueprint</div>
+                <div class="apple-title" style="font-size: 3.5rem;">Mapping the unseen.</div>
+                <div class="apple-body">Before treatment begins, we create a flawless map of your anatomy using advanced simulators like PCCT, MR, or PET/CT. You will lie still while a custom immobilization device is gently molded to your body. This ensures millimeter-perfect accuracy.</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    st.write("\n\n<br><br>", unsafe_allow_html=True)
+    # PLANNING SECTION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000');">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">2. The Algorithm</div>
+                <div class="apple-title" style="font-size: 3.5rem;">Invisible math.</div>
+                <div class="apple-body">Behind the scenes, clinical oncologists and dosimetrists construct a highly customized plan. We calculate the exact trajectory of the radiation beams to maximize impact on the target area while strictly protecting surrounding healthy tissues.</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # Section 2: Planning (Image Left, Text Right)
-    col3, col4 = st.columns([1, 1.2], gap="large")
-    with col3:
-         # Placeholder for a computer/planning image
-        st.image("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800", use_container_width=True)
-    with col4:
-        st.markdown('<p class="section-header">2. The Invisible Math (Planning)</p>', unsafe_allow_html=True)
-        st.markdown('<p class="section-text">Behind the scenes, clinical oncologists and dosimetrists construct a highly customized algorithm. We calculate the exact trajectory of the radiation beams to maximize impact on the target area while strictly protecting surrounding healthy tissues.</p>', unsafe_allow_html=True)
-
-    st.write("\n\n<br><br>", unsafe_allow_html=True)
-
-    # Section 3: Treatment (Text Left, Image Right)
-    col5, col6 = st.columns([1.2, 1], gap="large")
-    with col5:
-        st.markdown('<p class="section-header">3. The Routine (Daily Treatment)</p>', unsafe_allow_html=True)
-        st.markdown('<p class="section-text">When you enter the Linear Accelerator (Linac) room, the therapists will align you precisely to your setup marks. The actual treatment takes only a few minutes.</p>', unsafe_allow_html=True)
-        st.markdown('<p class="section-text"><b>It is completely invisible and painless.</b> You will hear a loud buzzing sound as the machine rotates around you. While the staff leaves the room during delivery, they monitor you closely via cameras and can hear you at all times.</p>', unsafe_allow_html=True)
-    with col6:
-        st.image("https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800", use_container_width=True)
+    # TREATMENT SECTION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000');">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">3. The Delivery</div>
+                <div class="apple-title" style="font-size: 3.5rem;">Painless. Precise.</div>
+                <div class="apple-body">Inside the Linear Accelerator (Linac) room, therapists align you to your exact setup marks. The actual treatment takes only minutes, is completely invisible, and causes no pain. You will hear a buzzing sound, and we monitor you closely via cameras at all times.</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
