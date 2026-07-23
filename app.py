@@ -73,6 +73,7 @@ if page == "💬 Triage Assistant":
         if treatment_site == "Not selected":
             st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us.")
         else:
+            st.session_test.messages.append({"role": "user", "content": user_input}) if "messages" in st.session_state else None
             st.session_state.messages.append({"role": "user", "content": user_input})
             with st.chat_message("user"):
                 st.markdown(user_input)
@@ -105,8 +106,8 @@ elif page == "📖 What to Expect":
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # Injecting custom CSS with properly escaped brackets (double {{ and }}) for the f-string
-    st.markdown(f"""
+    # CSS Template using safe .format() injection to avoid f-string bracket errors
+    css_template = """
         <style>
         .block-container {{
             padding: 0rem !important;
@@ -115,10 +116,10 @@ elif page == "📖 What to Expect":
         header {{visibility: hidden;}}
         footer {{visibility: hidden;}}
 
-        .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
-        .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
-        .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
-        .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
+        .parallax-hero {{ background-image: url("data:image/png;base64,{}"); }}
+        .parallax-sim {{ background-image: url("data:image/png;base64,{}"); }}
+        .parallax-plan {{ background-image: url("data:image/png;base64,{}"); }}
+        .parallax-treat {{ background-image: url("data:image/png;base64,{}"); }}
 
         .parallax-section {{
             background-attachment: fixed;
@@ -131,7 +132,7 @@ elif page == "📖 What to Expect":
             justify-content: center;
             position: relative;
             padding: 40px 20px;
-        }}
+        }
 
         .overlay {{
             position: absolute;
@@ -159,7 +160,9 @@ elif page == "📖 What to Expect":
         
         @media (max-width: 768px) {{ .apple-title {{ font-size: 3rem; }} }}
         </style>
-    """, unsafe_allow_html=True)
+    """
+    
+    st.markdown(css_template.format(img_hero, img_sim, img_plan, img_treat), unsafe_allow_html=True)
 
     # HERO SECTION
     st.markdown("""
