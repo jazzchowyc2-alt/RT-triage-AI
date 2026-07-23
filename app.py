@@ -4,6 +4,14 @@ from openai import OpenAI
 # 1. Setup the web page
 st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
 
+# ==========================================
+# BULLETPROOF HTML RENDERER
+# This prevents Streamlit from turning indented HTML into a code block
+# ==========================================
+def render_html(html_string):
+    cleaned_html = "\n".join([line.strip() for line in html_string.split("\n")])
+    st.markdown(cleaned_html, unsafe_allow_html=True)
+
 # 2. Navigation Sidebar
 with st.sidebar:
     st.title("Navigation")
@@ -86,102 +94,106 @@ if page == "💬 Triage Assistant":
 # PAGE 2: WHAT TO EXPECT (Cinematic Parallax)
 # ==========================================
 elif page == "📖 What to Expect":
-    # Notice there is no spacing/indentation inside the triple quotes below.
-    # This prevents Streamlit from rendering the HTML as a Markdown code block.
-    st.markdown("""
-<style>
-.block-container { padding: 0rem !important; max-width: 100% !important; }
-header {visibility: hidden;} footer {visibility: hidden;}
+    
+    # 1. Custom CSS
+    css_style = """
+    <style>
+    .block-container { padding: 0rem !important; max-width: 100% !important; }
+    header {visibility: hidden;} footer {visibility: hidden;}
 
-.parallax {
-    background-attachment: fixed; background-position: center;
-    background-repeat: no-repeat; background-size: cover;
-    min-height: 100vh; display: flex; align-items: center;
-    justify-content: center; position: relative; padding: 50px 20px;
-}
-.overlay {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.75); z-index: 1;
-}
-.content {
-    position: relative; z-index: 2; text-align: center; color: white; max-width: 1000px;
-}
-.apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);}
-.apple-subtitle { font-size: 1.8rem; font-weight: 500; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);}
-.apple-body { font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #e5e5ea; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px;}
+    .parallax {
+        background-attachment: fixed; background-position: center;
+        background-repeat: no-repeat; background-size: cover;
+        min-height: 100vh; display: flex; align-items: center;
+        justify-content: center; position: relative; padding: 50px 20px;
+    }
+    .overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.75); z-index: 1;
+    }
+    .content {
+        position: relative; z-index: 2; text-align: center; color: white; max-width: 1000px;
+    }
+    .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);}
+    .apple-subtitle { font-size: 1.8rem; font-weight: 500; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);}
+    .apple-body { font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #e5e5ea; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px;}
+    
+    .grid-container {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; margin-top: 30px;
+    }
+    @media (max-width: 768px) {
+        .grid-container { grid-template-columns: 1fr; }
+        .apple-title { font-size: 3rem; }
+    }
+    .grid-box {
+        background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);
+    }
+    .grid-title { font-size: 1.5rem; font-weight: 600; color: #fff; margin-bottom: 10px; }
+    </style>
+    """
+    render_html(css_style)
 
-.grid-container {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; margin-top: 30px;
-}
-@media (max-width: 768px) {
-    .grid-container { grid-template-columns: 1fr; }
-    .apple-title { font-size: 3rem; }
-}
-.grid-box {
-    background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);
-}
-.grid-title { font-size: 1.5rem; font-weight: 600; color: #fff; margin-bottom: 10px; }
-</style>
-""", unsafe_allow_html=True)
-
-    # 1. HERO SECTION (Varian TrueBeam image)
-    st.markdown("""
-<div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Varian_TrueBeam_STx_at_the_UCSF_Helen_Diller_Medical_Center.jpg/1280px-Varian_TrueBeam_STx_at_the_UCSF_Helen_Diller_Medical_Center.jpg');">
-    <div class="overlay" style="background: rgba(0,0,0,0.6);"></div>
-    <div class="content">
-        <div class="apple-title">Radiotherapy. Demystified.</div>
-        <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
-        <div class="apple-body">Scroll down to explore the technology and workflow behind your treatment.</div>
+    # 2. HERO SECTION (Varian TrueBeam image)
+    hero_html = """
+    <div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Varian_TrueBeam_STx_at_the_UCSF_Helen_Diller_Medical_Center.jpg/1280px-Varian_TrueBeam_STx_at_the_UCSF_Helen_Diller_Medical_Center.jpg');">
+        <div class="overlay" style="background: rgba(0,0,0,0.6);"></div>
+        <div class="content">
+            <div class="apple-title">Radiotherapy. Demystified.</div>
+            <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
+            <div class="apple-body">Scroll down to explore the technology and workflow behind your treatment.</div>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """
+    render_html(hero_html)
 
-    # 2. SIMULATION & IMMOBILIZATION (Thermoplastic Mask image)
-    st.markdown("""
-<div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Radiation_therapy_mask.jpg/1280px-Radiation_therapy_mask.jpg');">
-    <div class="overlay"></div>
-    <div class="content">
-        <div class="apple-subtitle">Step 1: The Blueprint</div>
-        <div class="apple-title">Locked in. Comfortably.</div>
-        <div class="apple-body">Before treatment, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy every single day, we use custom immobilization devices tailored to your specific treatment site:</div>
-        
-        <div class="grid-container">
-            <div class="grid-box">
-                <div class="grid-title">👤 Head & Neck</div>
-                <div class="apple-body" style="margin-bottom:0;">A warm, mesh-like <b>Thermoplastic Mask</b> is gently molded over your face and shoulders. It hardens in minutes, keeping you perfectly still—crucial for treating areas near critical structures.</div>
-            </div>
-            <div class="grid-box">
-                <div class="grid-title">🫁 Breast & Thorax</div>
-                <div class="apple-body" style="margin-bottom:0;">You will rest on an angled <b>Breast Board</b> or Wing Board with your arms raised comfortably above your head, exposing the chest and protecting your lungs.</div>
-            </div>
-            <div class="grid-box">
-                <div class="grid-title">🧍 Pelvis & Prostate</div>
-                <div class="apple-body" style="margin-bottom:0;">A <b>Vac-Lok Cushion</b> (a vacuum-sealed beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.</div>
+    # 3. SIMULATION & IMMOBILIZATION (Thermoplastic Mask image)
+    simulation_html = """
+    <div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Radiation_therapy_mask.jpg/1280px-Radiation_therapy_mask.jpg');">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="apple-subtitle">Step 1: The Blueprint</div>
+            <div class="apple-title">Locked in. Comfortably.</div>
+            <div class="apple-body">Before treatment, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy every single day, we use custom immobilization devices tailored to your specific treatment site:</div>
+            
+            <div class="grid-container">
+                <div class="grid-box">
+                    <div class="grid-title">👤 Head & Neck</div>
+                    <div class="apple-body" style="margin-bottom:0;">A warm, mesh-like <b>Thermoplastic Mask</b> is gently molded over your face and shoulders. It hardens in minutes, keeping you perfectly still—crucial for treating areas near critical structures.</div>
+                </div>
+                <div class="grid-box">
+                    <div class="grid-title">🫁 Breast & Thorax</div>
+                    <div class="apple-body" style="margin-bottom:0;">You will rest on an angled <b>Breast Board</b> or Wing Board with your arms raised comfortably above your head, exposing the chest and protecting your lungs.</div>
+                </div>
+                <div class="grid-box">
+                    <div class="grid-title">🧍 Pelvis & Prostate</div>
+                    <div class="apple-body" style="margin-bottom:0;">A <b>Vac-Lok Cushion</b> (a vacuum-sealed beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """
+    render_html(simulation_html)
 
-    # 3. THE MACHINES (Tomotherapy image)
-    st.markdown("""
-<div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tomotherapy_Hi-Art_System_at_Naval_Medical_Center_San_Diego.jpg/1280px-Tomotherapy_Hi-Art_System_at_Naval_Medical_Center_San_Diego.jpg');">
-    <div class="overlay"></div>
-    <div class="content">
-        <div class="apple-subtitle">Step 2: The Arsenal</div>
-        <div class="apple-title">The right tool for the exact target.</div>
-        <div class="apple-body">Depending on your treatment plan, our clinical team will select the most advanced delivery system available to target the tumor while sparing healthy tissue.</div>
-        
-        <div class="grid-container">
-            <div class="grid-box">
-                <div class="grid-title">🎯 Linear Accelerator (Linac)</div>
-                <div class="apple-body" style="margin-bottom:0;"><b>The Workhorse.</b> The Linac is an open, rotating arm that moves seamlessly around you. It uses advanced techniques like VMAT to sculpt radiation beams to the 3D shape of the tumor in just a few minutes. Fast, highly versatile, and used for the majority of treatments.</div>
-            </div>
-            <div class="grid-box">
-                <div class="grid-title">🌀 TomoTherapy</div>
-                <div class="apple-body" style="margin-bottom:0;"><b>The Spiral Specialist.</b> Designed to look like a CT scanner, TomoTherapy delivers radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution, making it exceptionally powerful for complex, large, or hard-to-reach tumors.</div>
+    # 4. THE MACHINES (Tomotherapy image)
+    machines_html = """
+    <div class="parallax" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tomotherapy_Hi-Art_System_at_Naval_Medical_Center_San_Diego.jpg/1280px-Tomotherapy_Hi-Art_System_at_Naval_Medical_Center_San_Diego.jpg');">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="apple-subtitle">Step 2: The Arsenal</div>
+            <div class="apple-title">The right tool for the exact target.</div>
+            <div class="apple-body">Depending on your treatment plan, our clinical team will select the most advanced delivery system available to target the tumor while sparing healthy tissue.</div>
+            
+            <div class="grid-container">
+                <div class="grid-box">
+                    <div class="grid-title">🎯 Linear Accelerator (Linac)</div>
+                    <div class="apple-body" style="margin-bottom:0;"><b>The Workhorse.</b> The Linac is an open, rotating arm that moves seamlessly around you. It uses advanced techniques like VMAT to sculpt radiation beams to the 3D shape of the tumor in just a few minutes. Fast, highly versatile, and used for the majority of treatments.</div>
+                </div>
+                <div class="grid-box">
+                    <div class="grid-title">🌀 TomoTherapy</div>
+                    <div class="apple-body" style="margin-bottom:0;"><b>The Spiral Specialist.</b> Designed to look like a CT scanner, TomoTherapy delivers radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution, making it exceptionally powerful for complex, large, or hard-to-reach tumors.</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """
+    render_html(machines_html)
