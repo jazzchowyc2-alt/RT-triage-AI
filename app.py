@@ -1,8 +1,22 @@
 import streamlit as st
+import base64
+import os
 from openai import OpenAI
 
 # 1. Setup the web page
 st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
+
+# --- HELPER FUNCTION FOR CINEMATIC IMAGES ---
+@st.cache_data
+def get_base64_of_bin_file(bin_file):
+    """Reads a local image and converts it to base64 so CSS can use it as a background."""
+    try:
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except FileNotFoundError:
+        # Failsafe just in case the image hasn't loaded yet
+        return ""
 
 # 2. Navigation Sidebar
 with st.sidebar:
@@ -83,82 +97,158 @@ if page == "💬 Triage Assistant":
                     st.error(f"⚠️ API Error: {e}")
 
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (Native Streamlit Layout)
+# PAGE 2: WHAT TO EXPECT (Cinematic Scroll)
 # ==========================================
 elif page == "📖 What to Expect":
     
-    # Clean, native typography sizing
-    st.markdown("""
+    # Pre-load the images into base64 format for CSS
+    img_hero = get_base64_of_bin_file("image/Radiotherapist.png")
+    img_sim = get_base64_of_bin_file("image/Simulation.png")
+    img_plan = get_base64_of_bin_file("image/Planning.png")
+    img_treat = get_base64_of_bin_file("image/tomo.png")
+
+    # Injecting massive custom CSS to override Streamlit's default layout
+    # Notice the background-image URLs are dynamically injecting your local photos
+    st.markdown(f"""
         <style>
-        .title-text { font-size: 3.5rem; font-weight: 700; text-align: center; margin-bottom: 0; line-height: 1.2; }
-        .subtitle-text { font-size: 1.5rem; font-weight: 500; text-align: center; color: #0071e3; margin-bottom: 40px; }
-        .section-header { font-size: 2.5rem; font-weight: 600; margin-top: 50px; margin-bottom: 10px; }
-        .body-text { font-size: 1.1rem; line-height: 1.6; color: #d2d2d7; margin-bottom: 20px;}
+        /* Force edge-to-edge layout */
+        .block-container {{
+            padding: 0rem !important;
+            max-width: 100% !important;
+        }}
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+
+        /* The Parallax Magic */
+        .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
+        .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
+        .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
+        .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
+
+        .parallax-section {{
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px 20px;
+        }}
+
+        /* Dark overlay for readability */
+        .overlay {{
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1;
+        }}
+
+        /* Apple-style typography */
+        .content {{
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            max-width: 1000px;
+        }}
+        .apple-title {{ font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }}
+        .apple-subtitle {{ font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }}
+        .apple-body {{ font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }}
+        
+        .grid-container {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }}
+        .grid-box {{ background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }}
+        .grid-title {{ font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }}
+        .grid-text {{ font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }}
+        
+        @media (max-width: 768px) {{ .apple-title {{ font-size: 3rem; }} }}
         </style>
     """, unsafe_allow_html=True)
 
-    # --- HERO SECTION ---
-    st.markdown('<p class="title-text">Radiotherapy.<br>Demystified.</p>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle-text">Profound precision. Designed for your healing.</p>', unsafe_allow_html=True)
-    
-    # Hero Image
-    st.image("image/Radiotherapist.png", use_container_width=True)
-    st.divider()
+    # HERO SECTION
+    st.markdown("""
+        <div class="parallax-section parallax-hero">
+            <div class="overlay" style="background: rgba(0,0,0,0.5);"></div>
+            <div class="content">
+                <div class="apple-title">Radiotherapy.<br>Demystified.</div>
+                <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
+                <div class="apple-body">Scroll down to explore your journey.</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # --- STEP 1: SIMULATION ---
-    st.markdown('<p class="section-header">Step 1: The Blueprint</p>', unsafe_allow_html=True)
-    st.markdown('<p class="body-text">Before treatment, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy, we use custom immobilization devices tailored to you.</p>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.subheader("👤 Head & Neck")
-        st.write("A warm, mesh-like Thermoplastic Mask is molded over your face and shoulders. It hardens in minutes, keeping you perfectly still.")
-    with col2:
-        st.subheader("🫁 Breast & Thorax")
-        st.write("You will rest on a customized Breast/Wing Board with your arms safely positioned above your head, exposing the treatment area.")
-    with col3:
-        st.subheader("🧍 Pelvis")
-        st.write("A Vac-Lok Cushion (a vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.")
+    # SIMULATION SECTION
+    st.markdown("""
+        <div class="parallax-section parallax-sim">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">Step 1: The Blueprint</div>
+                <div class="apple-title">Locked in. Comfortably.</div>
+                <div class="apple-body">Before treatment begins, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy, we use custom immobilization devices.</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">👤 Head & Neck</div>
+                        <div class="grid-text">A warm, mesh-like <b>Thermoplastic Mask</b> is molded over your face and shoulders. It hardens in minutes, keeping you perfectly still.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🫁 Breast & Thorax</div>
+                        <div class="grid-text">You will rest on a <b>Breast/Wing Board</b> with arms raised above your head, exposing the chest and stabilizing the lungs.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🧍 Pelvis & Prostate</div>
+                        <div class="grid-text">A <b>Vac-Lok Cushion</b> (a vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # Simulation Image
-    st.image("image/Simulation.png", caption="Radiation Therapy Simulation & Setup", use_container_width=True)
-    st.divider()
+    # PLANNING SECTION
+    st.markdown("""
+        <div class="parallax-section parallax-plan">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">Step 2: The Algorithm</div>
+                <div class="apple-title">Invisible math. Maximum impact.</div>
+                <div class="apple-body">Behind the scenes, clinical oncologists and dosimetrists construct a highly customized 3D plan using powerful computers.</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">🎯 Contouring</div>
+                        <div class="grid-text">Doctors meticulously draw exact boundaries on your scans, separating the target tumor volume from critical healthy organs nearby.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">📐 Dosimetry</div>
+                        <div class="grid-text">We calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # --- STEP 2: PLANNING ---
-    st.markdown('<p class="section-header">Step 2: The Algorithm</p>', unsafe_allow_html=True)
-    st.markdown('<p class="body-text">Behind the scenes, your clinical oncologists and dosimetrists construct a highly customized 3D plan.</p>', unsafe_allow_html=True)
-    
-    col4, col5 = st.columns(2)
-    with col4:
-        st.subheader("🎯 Contouring")
-        st.write("Doctors meticulously draw exact boundaries on your scans, separating the target tumor volume from the critical organs nearby.")
-    with col5:
-        st.subheader("📐 Dosimetry")
-        st.write("Using supercomputers, we calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.")
-
-    # Planning Image
-    st.image("image/Planning.png", caption="Treatment Planning System", use_container_width=True)
-    st.divider()
-
-    # --- STEP 3: VERIFICATION ---
-    st.markdown('<p class="section-header">Step 3: Verification</p>', unsafe_allow_html=True)
-    st.markdown('<p class="body-text">Before the treatment beam even turns on, we perform a vital safety check right inside the treatment room using Image-Guided Precision.</p>', unsafe_allow_html=True)
-    
-    # Verification/CBCT Image
-    st.image("image/CBCT.png", caption="Daily Image Guidance", use_container_width=True)
-    st.divider()
-
-    # --- STEP 4: TREATMENT ---
-    st.markdown('<p class="section-header">Step 4: The Treatment</p>', unsafe_allow_html=True)
-    st.markdown('<p class="body-text">You will not feel, see, or smell the radiation. It is completely painless. Depending on your specific plan, we use one of our advanced delivery systems:</p>', unsafe_allow_html=True)
-    
-    col6, col7 = st.columns(2)
-    with col6:
-        st.subheader("🚀 Linear Accelerator (Linac)")
-        st.write("The open, rotating arm moves seamlessly around you. Using VMAT technology, it sculpts radiation beams to the 3D shape of the tumor in just a few minutes.")
-    with col7:
-        st.subheader("🌀 TomoTherapy")
-        st.write("Delivering radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution for complex treatment areas.")
-
-    # Treatment Machine Image
-    st.image("image/tomo.png", caption="Advanced Delivery Systems", use_container_width=True)
+    # TREATMENT SECTION
+    st.markdown("""
+        <div class="parallax-section parallax-treat">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">Step 3: The Treatment</div>
+                <div class="apple-title">Painless. Precise.</div>
+                <div class="apple-body">You will not feel, see, or smell the radiation. Depending on your plan, we use one of our advanced delivery systems:</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">🚀 Linear Accelerator (Linac)</div>
+                        <div class="grid-text"><b>The Workhorse.</b> The open, rotating arm moves seamlessly around you. It sculpts radiation beams to the 3D shape of the tumor in just a few minutes.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🌀 TomoTherapy</div>
+                        <div class="grid-text"><b>The Spiral Specialist.</b> Delivering radiation slice-by-slice in a continuous 360-degree spiral. Unmatched precision for complex treatment areas.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
