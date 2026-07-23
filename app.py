@@ -105,7 +105,7 @@ elif page == "📖 What to Expect":
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # Injecting massive custom CSS to create the Apple-style parallax scrolling experience
+    # Injecting custom CSS with properly escaped brackets (double {{ and }}) for the f-string
     st.markdown(f"""
         <style>
         .block-container {{
@@ -131,7 +131,7 @@ elif page == "📖 What to Expect":
             justify-content: center;
             position: relative;
             padding: 40px 20px;
-        }
+        }}
 
         .overlay {{
             position: absolute;
