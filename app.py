@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. Setup the web page (Must be the first command)
+# 1. Setup the web page
 st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
 
 # 2. Navigation Sidebar
@@ -83,101 +83,103 @@ if page == "💬 Triage Assistant":
                     st.error(f"⚠️ API Error: {e}")
 
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (Cinematic Parallax with Local Photos)
+# PAGE 2: WHAT TO EXPECT (Cinematic Parallax)
 # ==========================================
 elif page == "📖 What to Expect":
-    import base64
-
-    # Function to load local images for the CSS background
-    def get_base64_image(image_path):
-        try:
-            with open(image_path, "rb") as img_file:
-                return base64.b64encode(img_file.read()).decode()
-        except FileNotFoundError:
-            return "" # Failsafe if the image isn't found yet
-
-    # UPDATE THESE FILE PATHS TO YOUR LOCAL PHOTOS
-    hero_img_base64 = get_base64_image("images/hksh_linac.jpg") 
-    sim_img_base64 = get_base64_image("images/hksh_ct_sim.jpg")
-    plan_img_base64 = get_base64_image("images/tps_screen.jpg")
-    treat_img_base64 = get_base64_image("images/hksh_linac.jpg")
-
-    st.markdown(f"""
+    st.markdown("""
         <style>
-        .block-container {{ padding: 0rem !important; max-width: 100% !important; }}
-        header {{visibility: hidden;}}
-        footer {{visibility: hidden;}}
+        .block-container { padding: 0rem !important; max-width: 100% !important; }
+        header {visibility: hidden;} footer {visibility: hidden;}
 
-        .parallax {{
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }}
-        .overlay {{
+        .parallax {
+            background-attachment: fixed; background-position: center;
+            background-repeat: no-repeat; background-size: cover;
+            min-height: 100vh; display: flex; align-items: center;
+            justify-content: center; position: relative; padding: 50px 20px;
+        }
+        .overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1;
-        }}
-        .content {{
-            position: relative; z-index: 2; text-align: center; color: white; padding: 20px; max-width: 900px;
-        }}
-        .apple-title {{ font-size: 5rem; font-weight: 700; letter-spacing: -0.1rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);}}
-        .apple-subtitle {{ font-size: 2rem; font-weight: 500; color: #f5f5f7; margin-bottom: 30px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5);}}
-        .apple-body {{ font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #e5e5ea; text-shadow: 1px 1px 5px rgba(0,0,0,0.5);}}
+            background: rgba(0, 0, 0, 0.75); z-index: 1;
+        }
+        .content {
+            position: relative; z-index: 2; text-align: center; color: white; max-width: 1000px;
+        }
+        .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);}
+        .apple-subtitle { font-size: 1.8rem; font-weight: 500; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);}
+        .apple-body { font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: #e5e5ea; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px;}
+        
+        .grid-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; margin-top: 30px;
+        }
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .apple-title { font-size: 3rem; }
+        }
+        .grid-box {
+            background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);
+        }
+        .grid-title { font-size: 1.5rem; font-weight: 600; color: #fff; margin-bottom: 10px; }
         </style>
     """, unsafe_allow_html=True)
 
-    # HERO SECTION
-    st.markdown(f"""
-        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{hero_img_base64}');">
-            <div class="overlay" style="background: rgba(0,0,0,0.7);"></div>
+    # 1. HERO SECTION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000');">
+            <div class="overlay" style="background: rgba(0,0,0,0.6);"></div>
             <div class="content">
-                <div class="apple-title">Radiotherapy.</div>
-                <div class="apple-title" style="color: #0071e3;">Demystified.</div>
+                <div class="apple-title">Radiotherapy. Demystified.</div>
                 <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
-                <div class="apple-body">Scroll down to explore your journey.</div>
+                <div class="apple-body">Scroll down to explore the technology and workflow behind your treatment.</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # SIMULATION SECTION
-    st.markdown(f"""
-        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{sim_img_base64}');">
+    # 2. SIMULATION & IMMOBILIZATION
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=2000');">
             <div class="overlay"></div>
             <div class="content">
-                <div class="apple-subtitle">1. The Blueprint</div>
-                <div class="apple-title" style="font-size: 3.5rem;">Mapping the unseen.</div>
-                <div class="apple-body">Before treatment begins, we create a flawless map of your anatomy using advanced simulators like PCCT, MR, or PET/CT. You will lie still while a custom immobilization device is gently molded to your body. This ensures millimeter-perfect accuracy.</div>
+                <div class="apple-subtitle">Step 1: The Blueprint</div>
+                <div class="apple-title">Locked in. Comfortably.</div>
+                <div class="apple-body">Before treatment, we map your anatomy using advanced PCCT, MR, or PET/CT simulators. To ensure millimeter-perfect accuracy every single day, we use custom immobilization devices tailored to your specific treatment site:</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">👤 Head & Neck</div>
+                        <div class="apple-body" style="margin-bottom:0;">A warm, mesh-like <b>Thermoplastic Mask</b> is gently molded over your face and shoulders. It hardens in minutes, keeping you perfectly still—crucial for treating areas near critical structures.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🫁 Breast & Thorax</div>
+                        <div class="apple-body" style="margin-bottom:0;">You will rest on an angled <b>Breast Board</b> or Wing Board with your arms raised comfortably above your head, exposing the chest and protecting your lungs.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🧍 Pelvis & Prostate</div>
+                        <div class="apple-body" style="margin-bottom:0;">A <b>Vac-Lok Cushion</b> (a vacuum-sealed beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.</div>
+                    </div>
+                </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # PLANNING SECTION
-    st.markdown(f"""
-        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{plan_img_base64}');">
+    # 3. THE MACHINES (LINAC vs TOMO)
+    st.markdown("""
+        <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000');">
             <div class="overlay"></div>
             <div class="content">
-                <div class="apple-subtitle">2. The Algorithm</div>
-                <div class="apple-title" style="font-size: 3.5rem;">Invisible math.</div>
-                <div class="apple-body">Behind the scenes, clinical oncologists and dosimetrists construct a highly customized plan. We calculate the exact trajectory of the radiation beams to maximize impact on the target area while strictly protecting surrounding healthy tissues.</div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # TREATMENT SECTION
-    st.markdown(f"""
-        <div class="parallax" style="background-image: url('data:image/jpeg;base64,{treat_img_base64}');">
-            <div class="overlay"></div>
-            <div class="content">
-                <div class="apple-subtitle">3. The Delivery</div>
-                <div class="apple-title" style="font-size: 3.5rem;">Painless. Precise.</div>
-                <div class="apple-body">Inside the Linear Accelerator (Linac) room, therapists align you to your exact setup marks. The actual treatment takes only minutes, is completely invisible, and causes no pain. You will hear a buzzing sound, and we monitor you closely via cameras at all times.</div>
+                <div class="apple-subtitle">Step 2: The Arsenal</div>
+                <div class="apple-title">The right tool for the exact target.</div>
+                <div class="apple-body">Depending on your treatment plan, our clinical team will select the most advanced delivery system available to target the tumor while sparing healthy tissue.</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">🎯 Linear Accelerator (Linac)</div>
+                        <div class="apple-body" style="margin-bottom:0;"><b>The Workhorse.</b> The Linac is an open, rotating arm that moves seamlessly around you. It uses advanced techniques like VMAT to sculpt radiation beams to the 3D shape of the tumor in just a few minutes. Fast, highly versatile, and used for the majority of treatments.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🌀 TomoTherapy</div>
+                        <div class="apple-body" style="margin-bottom:0;"><b>The Spiral Specialist.</b> Designed to look like a CT scanner, TomoTherapy delivers radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution, making it exceptionally powerful for complex, large, or hard-to-reach tumors.</div>
+                    </div>
+                </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
