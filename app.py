@@ -1,6 +1,5 @@
 import streamlit as st
 import base64
-import os
 from openai import OpenAI
 
 # 1. Setup the web page
@@ -15,7 +14,6 @@ def get_base64_of_bin_file(bin_file):
             data = f.read()
         return base64.b64encode(data).decode()
     except FileNotFoundError:
-        # Failsafe just in case the image hasn't loaded yet
         return ""
 
 # 2. Navigation Sidebar
@@ -101,17 +99,15 @@ if page == "💬 Triage Assistant":
 # ==========================================
 elif page == "📖 What to Expect":
     
-    # Pre-load the images into base64 format for CSS
+    # Pre-load local images from the 'image' folder into base64 format for CSS
     img_hero = get_base64_of_bin_file("image/Radiotherapist.png")
     img_sim = get_base64_of_bin_file("image/Simulation.png")
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # Injecting massive custom CSS to override Streamlit's default layout
-    # Notice the background-image URLs are dynamically injecting your local photos
+    # Injecting massive custom CSS to create the Apple-style parallax scrolling experience
     st.markdown(f"""
         <style>
-        /* Force edge-to-edge layout */
         .block-container {{
             padding: 0rem !important;
             max-width: 100% !important;
@@ -119,7 +115,6 @@ elif page == "📖 What to Expect":
         header {{visibility: hidden;}}
         footer {{visibility: hidden;}}
 
-        /* The Parallax Magic */
         .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
         .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
         .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
@@ -136,9 +131,8 @@ elif page == "📖 What to Expect":
             justify-content: center;
             position: relative;
             padding: 40px 20px;
-        }}
+        }
 
-        /* Dark overlay for readability */
         .overlay {{
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -146,7 +140,6 @@ elif page == "📖 What to Expect":
             z-index: 1;
         }}
 
-        /* Apple-style typography */
         .content {{
             position: relative;
             z-index: 2;
