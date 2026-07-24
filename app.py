@@ -65,7 +65,7 @@ if page == "💬 Triage Assistant":
 
     if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得好犀利呀')"):
         if treatment_site == "Not selected":
-            st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us.")
+            st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us. You make pick the treatment site by pressung >> button at left upper corner of your screen.")
         else:
             st.session_state.messages.append({"role": "user", "content": user_input})
             with st.chat_message("user"):
