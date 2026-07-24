@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from openai import OpenAI
 
 # 1. Setup the web page
@@ -17,7 +18,7 @@ with st.sidebar:
     st.markdown("---")
 
 # ==========================================
-# PAGE 1: THE TRIAGE ASSISTANT
+# PAGE 1: THE TRIAGE ASSISTANT (With P3 Upgrades)
 # ==========================================
 if page == "💬 Triage Assistant":
     st.title("🚑 「幫緊你幫緊你」Symptom Translator")
@@ -31,17 +32,39 @@ if page == "💬 Triage Assistant":
             "Select Radiotherapy Site:", 
             ["Not selected", "Head & Neck (e.g., NPC)", "Breast", "Thorax (Lung/Esophagus)", "Pelvis (Prostate/Rectum/Gynae)", "Other"]
         )
+        
+        # PROPOSAL 3: Fraction-Based Tracking
+        current_fraction = st.slider("Which fraction are you on today?", 1, 35, 1)
+        st.caption(f"Tracking timeline: Fraction {current_fraction}")
 
-    system_prompt = """You are a compassionate radiation oncology triage assistant in a Hong Kong hospital.
+    # PROPOSAL 3: Pre-Treatment Smart Checklists
+    if treatment_site != "Not selected":
+        with st.expander("✅ Today's Pre-Treatment Checklist", expanded=True):
+            if treatment_site == "Pelvis (Prostate/Rectum/Gynae)":
+                st.checkbox("I have finished drinking 500ml of water 1 hour ago.")
+                st.checkbox("I have emptied my rectum (bowel movement) today.")
+            elif treatment_site in ["Breast", "Thorax (Lung/Esophagus)"]:
+                st.checkbox("I am not wearing any deodorant, lotion, or powder on my chest.")
+                st.checkbox("I have practiced my breath-holds (DIBH) today.")
+            elif treatment_site == "Head & Neck (e.g., NPC)":
+                st.checkbox("I have completed my daily mouthwash routine.")
+                st.checkbox("I have removed all dentures, necklaces, and earrings.")
+            else:
+                st.checkbox("I have my hospital ID and appointment slip ready.")
+
+    system_prompt = f"""You are a compassionate radiation oncology triage assistant in a Hong Kong hospital.
+    The patient is currently on Fraction {current_fraction} of their radiotherapy for {treatment_site}. 
+    Adjust your clinical expectations based on this timeline (e.g., acute radiation dermatitis is unlikely at Fraction 1, but highly likely at Fraction 20).
+    
     You MUST output your response EXACTLY following this template. Do not skip any sections. 
 
     CRITICAL RULES:
-    1. RED FLAG SAFETY: If the symptom is severe or life-threatening (e.g., heavy bleeding, fever >38.5°C, severe chest pain, unable to swallow, severe skin ulceration), you MUST explicitly instruct the patient to go to the A&E (急症室) or contact the oncology ward immediately.
-    2. ANATOMICAL LOGIC: If the symptom is anatomically impossible for the selected Treatment Site, you MUST state clearly that this symptom is likely unrelated to their radiotherapy, but they should still seek medical attention.
+    1. RED FLAG SAFETY: If the symptom is severe or life-threatening (e.g., heavy bleeding, fever >38.5°C, severe chest pain, unable to swallow), explicitly instruct the patient to go to the A&E (急症室).
+    2. ANATOMICAL LOGIC: If the symptom is anatomically impossible for the Treatment Site, state clearly that this is likely unrelated to radiotherapy, but they should seek medical attention.
     3. CANTONESE TONE: Speak in highly natural, empathetic Hong Kong Cantonese.
 
     ### 🗣️ 姑娘/師兄話你知 (Message to Patient)
-    [Write in natural Hong Kong Cantonese. Warmly validate their discomfort. State clearly if the symptom matches their treatment site or if it requires emergency A&E attention.]
+    [Write in natural Hong Kong Cantonese. Warmly validate their discomfort. Factor in their current fraction number.]
 
     ### ✅ 可以咁做 (Do's)
     - [Cantonese: Actionable tip 1]
@@ -63,16 +86,16 @@ if page == "💬 Triage Assistant":
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-    if user_input := st.chat_input("How are you feeling today? (e.g., '我肚屙得好犀利呀')"):
+    if user_input := st.chat_input("How are you feeling today? (e.g., '我條頸啲皮膚好痛呀')"):
         if treatment_site == "Not selected":
-            st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us. You make pick the treatment site by pressung >> button at left upper corner of your screen.")
+            st.warning("⚠️ Please select your Treatment Site in the sidebar before messaging us.")
         else:
             st.session_state.messages.append({"role": "user", "content": user_input})
             with st.chat_message("user"):
                 st.markdown(user_input)
 
             client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
-            strict_reminder = f"""Patient's symptom: {user_input}\nPatient's Treatment Site: {treatment_site}\n[SYSTEM REMINDER: Check anatomical logic and output strict template.]"""
+            strict_reminder = f"""Patient's symptom: {user_input}\nPatient's Treatment Site: {treatment_site}\nFraction: {current_fraction}\n[SYSTEM REMINDER: Output strict template.]"""
             api_messages = st.session_state.messages[:-1] + [{"role": "user", "content": strict_reminder}]
             
             with st.chat_message("assistant"):
@@ -88,8 +111,9 @@ if page == "💬 Triage Assistant":
                 except Exception as e:
                     st.error(f"⚠️ API Error: {e}")
 
+
 # ==========================================
-# PAGE 2: WHAT TO EXPECT (Cinematic Scroll)
+# PAGE 2: WHAT TO EXPECT (With P1 Upgrades)
 # ==========================================
 elif page == "📖 What to Expect":
     
@@ -123,7 +147,7 @@ elif page == "📖 What to Expect":
     """
     render_html(static_css)
 
-    # 2. DYNAMIC CSS (Using Raw GitHub URLs for Instant Loading - Bypassing Base64 completely)
+    # 2. DYNAMIC CSS (GitHub Image URLs)
     dynamic_css = """
         <style>
         .parallax-hero { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/Radiotherapist.png"); }
@@ -147,6 +171,29 @@ elif page == "📖 What to Expect":
         </div>
     """
     render_html(hero_section)
+
+    # PROPOSAL 1: Interactive DIBH Simulator & Audio Desensitization
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: center; color: white;">Interactive Patient Tools</h2>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info("🫁 **DIBH Practice Timer**")
+        st.write("For breast and thoracic patients: Practice holding your breath to help us protect your heart during treatment.")
+        if st.button("Start 20-Second Breath Hold"):
+            progress_text = "Inhale deeply and HOLD..."
+            my_bar = st.progress(0, text=progress_text)
+            for percent_complete in range(100):
+                time.sleep(0.2)
+                my_bar.progress(percent_complete + 1, text=progress_text)
+            st.success("Breathe normally! Great job.")
+
+    with col2:
+        st.info("🎧 **Sensory Desensitization**")
+        st.write("Familiarize yourself with the sounds of the treatment room to reduce anxiety before you arrive.")
+        # Placeholders for actual audio files you can upload to GitHub later
+        st.audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg", format="audio/ogg")
+        st.caption("Example: Linear Accelerator Beam-On Tone")
 
     # STEP 1: SIMULATION SECTION
     sim_section = """
@@ -204,7 +251,7 @@ elif page == "📖 What to Expect":
     """
     render_html(plan_section)
     
-    # STEP 3: VERIFICATION SECTION (New CBCT Section)
+    # STEP 3: VERIFICATION SECTION
     cbct_section = """
         <div class="parallax-section parallax-cbct">
             <div class="overlay"></div>
