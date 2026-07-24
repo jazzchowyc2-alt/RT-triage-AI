@@ -67,11 +67,11 @@ if page == "💬 Triage Assistant":
             st.checkbox("🎽 I am wearing a loose, comfortable button-down shirt or zip-up top.")
             st.checkbox("🫁 I have practiced my Deep Inspiration Breath Hold (DIBH) exercises today.")
 
-        # 3. Thorax Logic
+       # 3. Thorax Logic
         elif treatment_site == "Thorax (Lung/Esophagus)":
             st.checkbox("🧴 I have not applied any lotions or creams to my chest or back.")
             st.checkbox("🫁 I have practiced my breathing exercises for respiratory gating.")
-            st.checkbox("⏱️ I have fasted for 2 hours (if instructed for oral/IV contrast).")
+            st.checkbox("💊 I have taken my prescribed antacids or pain medication 30 minutes ago (if experiencing heartburn or swallowing discomfort).")
 
         # 4. Head & Neck Logic
         elif treatment_site == "Head & Neck (e.g., NPC)":
