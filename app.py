@@ -1,21 +1,10 @@
 import streamlit as st
-import base64
 from openai import OpenAI
 
 # 1. Setup the web page
 st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
 
-# --- HELPER FUNCTIONS ---
-@st.cache_data
-def get_base64_of_bin_file(bin_file):
-    """Reads a local image and converts it to base64 so CSS can use it as a background."""
-    try:
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    except FileNotFoundError:
-        return ""
-
+# --- HELPER FUNCTION ---
 def render_html(html_string):
     """Strips leading whitespace so Streamlit doesn't turn it into a code block."""
     cleaned_html = "\n".join([line.strip() for line in html_string.split("\n")])
@@ -104,13 +93,7 @@ if page == "💬 Triage Assistant":
 # ==========================================
 elif page == "📖 What to Expect":
     
-    # Pre-load the images into base64 format for CSS
-    img_hero = get_base64_of_bin_file("image/Radiotherapist.png")
-    img_sim = get_base64_of_bin_file("image/Simulation.png")
-    img_plan = get_base64_of_bin_file("image/Planning.png")
-    img_treat = get_base64_of_bin_file("image/tomo.png")
-
-    # 1. STATIC CSS
+    # 1. STATIC CSS (Base Layout)
     static_css = """
         <style>
         .block-container { padding: 0rem !important; max-width: 100% !important; }
@@ -123,14 +106,15 @@ elif page == "📖 What to Expect":
         }
 
         .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); z-index: 1; }
-        .content { position: relative; z-index: 2; text-align: center; color: white; padding: 20px; max-width: 1000px; }
+        .content { position: relative; z-index: 2; text-align: center; color: white; padding: 20px; max-width: 1100px; }
         
         .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
         .apple-subtitle { font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
         .apple-body { font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }
         
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }
-        .grid-box { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }
+        .grid-box { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); transition: transform 0.3s ease; }
+        .grid-box:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.15); }
         .grid-title { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }
         .grid-text { font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }
         
@@ -139,13 +123,14 @@ elif page == "📖 What to Expect":
     """
     render_html(static_css)
 
-    # 2. DYNAMIC CSS (Safe f-string for injecting images)
-    dynamic_css = f"""
+    # 2. DYNAMIC CSS (Using Raw GitHub URLs for Instant Loading - Bypassing Base64 completely)
+    dynamic_css = """
         <style>
-        .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
-        .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
-        .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
-        .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
+        .parallax-hero { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/Radiotherapist.png"); }
+        .parallax-sim { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/Simulation.png"); }
+        .parallax-plan { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/Planning.png"); }
+        .parallax-cbct { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/CBCT.png"); }
+        .parallax-treat { background-image: url("https://raw.githubusercontent.com/jazzchowyc2-alt/RT-triage-AI/main/image/tomo.png"); }
         </style>
     """
     render_html(dynamic_css)
@@ -157,33 +142,33 @@ elif page == "📖 What to Expect":
             <div class="content">
                 <div class="apple-title">Radiotherapy.<br>Demystified.</div>
                 <div class="apple-subtitle">Profound precision. Designed for your healing.</div>
-                <div class="apple-body">Scroll down to explore your journey.</div>
+                <div class="apple-body">The journey to recovery involves complex physics and advanced clinical care. Scroll down to explore the complete workflow behind your treatment.</div>
             </div>
         </div>
     """
     render_html(hero_section)
 
-    # SIMULATION SECTION
+    # STEP 1: SIMULATION SECTION
     sim_section = """
         <div class="parallax-section parallax-sim">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">Step 1: The Blueprint</div>
                 <div class="apple-title">Locked in. Comfortably.</div>
-                <div class="apple-body">Before treatment begins, we map your anatomy using advanced simulators. To ensure millimeter-perfect accuracy, we use custom immobilization devices.</div>
+                <div class="apple-body">Before treatment begins, your clinical journey starts with a specialized CT or MR Simulation. We map your internal anatomy and create custom immobilization devices to ensure millimeter-perfect reproducibility every single day.</div>
                 
                 <div class="grid-container">
                     <div class="grid-box">
-                        <div class="grid-title">👤 Head & Neck</div>
-                        <div class="grid-text">A warm, mesh-like <b>Thermoplastic Mask</b> is molded over your face and shoulders. It hardens in minutes, keeping you perfectly still.</div>
+                        <div class="grid-title">👤 Head & Neck Immobilization</div>
+                        <div class="grid-text">For head and neck targets, a warm, thermoplastic material is molded securely over your face and shoulders. It hardens into a rigid mask within minutes, acting as an essential 3-point or 5-point fixation system to protect critical structures like your brainstem and optic nerves.</div>
                     </div>
                     <div class="grid-box">
-                        <div class="grid-title">🫁 Breast & Thorax</div>
-                        <div class="grid-text">You will rest on a <b>Breast/Wing Board</b> with arms raised above your head, exposing the chest and stabilizing the lungs.</div>
+                        <div class="grid-title">🫁 Thorax & Respiratory Gating</div>
+                        <div class="grid-text">For breast or lung treatments, you may rest on a custom Breast/Wing Board. Since tumors in the chest move when you breathe, we often use <b>4D-CT tracking</b> to monitor your respiratory cycle, allowing the radiation beam to turn on only when the tumor is in the exact right position.</div>
                     </div>
                     <div class="grid-box">
-                        <div class="grid-title">🧍 Pelvis & Prostate</div>
-                        <div class="grid-text">A <b>Vac-Lok Cushion</b> (a vacuum beanbag) molds exactly to your lower body, ensuring absolute stability for your legs and pelvis.</div>
+                        <div class="grid-title">🧍 Pelvis & Patient Preparation</div>
+                        <div class="grid-text">A <b>Vac-Lok Cushion</b> molds perfectly to your legs for lower body stability. For targets like the prostate or cervix, you will be given strict daily protocols—such as drinking specific amounts of water to fill your bladder—which physically pushes healthy intestines safely out of the radiation field.</div>
                     </div>
                 </div>
             </div>
@@ -191,47 +176,79 @@ elif page == "📖 What to Expect":
     """
     render_html(sim_section)
 
-    # PLANNING SECTION
+    # STEP 2: PLANNING SECTION
     plan_section = """
         <div class="parallax-section parallax-plan">
             <div class="overlay"></div>
             <div class="content">
                 <div class="apple-subtitle">Step 2: The Algorithm</div>
                 <div class="apple-title">Invisible math. Maximum impact.</div>
-                <div class="apple-body">Behind the scenes, clinical oncologists and dosimetrists construct a highly customized 3D plan using powerful computers.</div>
+                <div class="apple-body">During the 1 to 2 weeks before your first treatment, our multidisciplinary team of Clinical Oncologists, Medical Physicists, and Dosimetrists are hard at work constructing your personalized 3D treatment plan.</div>
                 
                 <div class="grid-container">
                     <div class="grid-box">
-                        <div class="grid-title">🎯 Contouring</div>
-                        <div class="grid-text">Doctors meticulously draw exact boundaries on your scans, separating the target tumor volume from critical healthy organs nearby.</div>
+                        <div class="grid-title">🎯 Target Delineation</div>
+                        <div class="grid-text">Using your simulation scans, your Clinical Oncologist meticulously draws boundaries slice-by-slice. They map the exact Gross Tumor Volume (GTV) and microscopic spread, while carefully contouring the nearby healthy Organs at Risk (OARs) to ensure they are spared.</div>
                     </div>
                     <div class="grid-box">
-                        <div class="grid-title">📐 Dosimetry</div>
-                        <div class="grid-text">We calculate the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while shielding healthy tissue.</div>
+                        <div class="grid-title">📐 Dosimetry & Optimization</div>
+                        <div class="grid-text">Using powerful supercomputers, our planning software calculates millions of variables. It optimizes the exact angles, intensity, and shape of the radiation beams to maximize tumor destruction while minimizing the dose to surrounding healthy tissue.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🛡️ Phantom Quality Assurance</div>
+                        <div class="grid-text">Before you ever step foot in the treatment room, we run a "dry run." Your finalized plan is delivered to a highly sensitive testing phantom to physically verify that the machine is delivering the exact radiation dose the computer prescribed.</div>
                     </div>
                 </div>
             </div>
         </div>
     """
     render_html(plan_section)
+    
+    # STEP 3: VERIFICATION SECTION (New CBCT Section)
+    cbct_section = """
+        <div class="parallax-section parallax-cbct">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="apple-subtitle">Step 3: The Verification</div>
+                <div class="apple-title">Image-Guided Radiotherapy (IGRT).</div>
+                <div class="apple-body">Precision is everything. Internal organs shift naturally from day to day. Before the treatment beam even turns on, your Radiation Therapists perform a vital daily safety check inside the room.</div>
+                
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="grid-title">📷 Cone Beam CT (CBCT)</div>
+                        <div class="grid-text">While you are lying in the exact treatment position, the machine rotates around you to take a quick, live 3D X-ray. We overlay this live image directly on top of your original Step 1 Blueprint to check for any internal movement.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🕹️ 6D Robotic Couch Adjustments</div>
+                        <div class="grid-text">If your anatomy has shifted even slightly, our highly advanced robotic treatment couch will automatically shift by fractions of a millimeter—adjusting pitch, roll, and yaw—to ensure the tumor is perfectly aligned with the machine's crosshairs.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """
+    render_html(cbct_section)
 
-    # TREATMENT SECTION
+    # STEP 4: TREATMENT SECTION
     treat_section = """
         <div class="parallax-section parallax-treat">
             <div class="overlay"></div>
             <div class="content">
-                <div class="apple-subtitle">Step 3: The Treatment</div>
-                <div class="apple-title">Painless. Precise.</div>
-                <div class="apple-body">You will not feel, see, or smell the radiation. Depending on your plan, we use one of our advanced delivery systems:</div>
+                <div class="apple-subtitle">Step 4: The Delivery</div>
+                <div class="apple-title">Painless. Fast. Precise.</div>
+                <div class="apple-body">You will not feel, see, or smell the radiation. The entire appointment takes about 15 minutes, but the actual radiation is delivered in just 2 to 3 minutes. Depending on your clinical needs, we utilize advanced delivery systems:</div>
                 
                 <div class="grid-container">
                     <div class="grid-box">
-                        <div class="grid-title">🚀 Linear Accelerator (Linac)</div>
-                        <div class="grid-text"><b>The Workhorse.</b> The open, rotating arm moves seamlessly around you. It sculpts radiation beams to the 3D shape of the tumor in just a few minutes.</div>
+                        <div class="grid-title">🚀 Linear Accelerator (VMAT)</div>
+                        <div class="grid-text"><b>The Workhorse.</b> The open, rotating arm moves seamlessly around you. Using Volumetric Modulated Arc Therapy (VMAT), the machine continuously shapes and alters the intensity of the radiation beam as it moves, painting the dose perfectly to the 3D shape of the tumor.</div>
                     </div>
                     <div class="grid-box">
                         <div class="grid-title">🌀 TomoTherapy</div>
-                        <div class="grid-text"><b>The Spiral Specialist.</b> Delivering radiation slice-by-slice in a continuous 360-degree spiral. Unmatched precision for complex treatment areas.</div>
+                        <div class="grid-text"><b>The Spiral Specialist.</b> Operating much like a standard CT scanner, TomoTherapy delivers radiation slice-by-slice in a continuous 360-degree spiral. It provides unmatched conformal dose distribution, making it exceptionally powerful for complex or elongated treatment areas.</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">🎥 Constant Care</div>
+                        <div class="grid-text">Although the radiotherapists must leave the heavy lead-lined room during the beam delivery, you are never alone. We monitor you continuously through multiple high-definition CCTV cameras and a two-way intercom system.</div>
                     </div>
                 </div>
             </div>
