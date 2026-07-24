@@ -107,24 +107,17 @@ elif page == "📖 What to Expect":
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # Injecting massive custom CSS to override Streamlit's default layout
-    st.markdown(f"""
+    # 1. STATIC CSS (No f-string, normal CSS brackets, no crashes!)
+    st.markdown("""
         <style>
-        /* Force edge-to-edge layout */
-        .block-container {{
+        .block-container {
             padding: 0rem !important;
             max-width: 100% !important;
-        }}
-        header {{visibility: hidden;}}
-        footer {{visibility: hidden;}}
+        }
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
 
-        /* The Parallax Magic */
-        .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
-        .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
-        .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
-        .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
-
-        .parallax-section {{
+        .parallax-section {
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
@@ -135,35 +128,44 @@ elif page == "📖 What to Expect":
             justify-content: center;
             position: relative;
             padding: 40px 20px;
-        }}
+        }
 
-        /* Dark overlay for readability */
-        .overlay {{
+        .overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.75);
             z-index: 1;
-        }}
+        }
 
-        /* Apple-style typography */
-        .content {{
+        .content {
             position: relative;
             z-index: 2;
             text-align: center;
             color: white;
             padding: 20px;
             max-width: 1000px;
-        }}
-        .apple-title {{ font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }}
-        .apple-subtitle {{ font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }}
-        .apple-body {{ font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }}
+        }
         
-        .grid-container {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }}
-        .grid-box {{ background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }}
-        .grid-title {{ font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }}
-        .grid-text {{ font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }}
+        .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .apple-subtitle { font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
+        .apple-body { font-size: 1.25rem; font-weight: 300; line-height: 1.6; color: #f5f5f7; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-bottom: 30px; }
         
-        @media (max-width: 768px) {{ .apple-title {{ font-size: 3rem; }} }}
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: left; margin-top: 40px; }
+        .grid-box { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
+        .grid-title { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 15px; }
+        .grid-text { font-size: 1.1rem; color: #d2d2d7; line-height: 1.5; }
+        
+        @media (max-width: 768px) { .apple-title { font-size: 3rem; } }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 2. DYNAMIC CSS (Safe f-string specifically isolated for injecting images only)
+    st.markdown(f"""
+        <style>
+        .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
+        .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
+        .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
+        .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
         </style>
     """, unsafe_allow_html=True)
 
