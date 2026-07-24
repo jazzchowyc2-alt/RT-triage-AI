@@ -1,12 +1,11 @@
 import streamlit as st
 import base64
-import os
 from openai import OpenAI
 
 # 1. Setup the web page
 st.set_page_config(page_title="幫緊你幫緊你 AI Triage", page_icon="🚑", layout="centered")
 
-# --- HELPER FUNCTION FOR CINEMATIC IMAGES ---
+# --- HELPER FUNCTIONS ---
 @st.cache_data
 def get_base64_of_bin_file(bin_file):
     """Reads a local image and converts it to base64 so CSS can use it as a background."""
@@ -15,8 +14,12 @@ def get_base64_of_bin_file(bin_file):
             data = f.read()
         return base64.b64encode(data).decode()
     except FileNotFoundError:
-        # Failsafe just in case the image hasn't loaded yet
         return ""
+
+def render_html(html_string):
+    """Strips leading whitespace so Streamlit doesn't turn it into a code block."""
+    cleaned_html = "\n".join([line.strip() for line in html_string.split("\n")])
+    st.markdown(cleaned_html, unsafe_allow_html=True)
 
 # 2. Navigation Sidebar
 with st.sidebar:
@@ -107,44 +110,20 @@ elif page == "📖 What to Expect":
     img_plan = get_base64_of_bin_file("image/Planning.png")
     img_treat = get_base64_of_bin_file("image/tomo.png")
 
-    # 1. STATIC CSS (No f-string, normal CSS brackets, no crashes!)
-    st.markdown("""
+    # 1. STATIC CSS
+    static_css = """
         <style>
-        .block-container {
-            padding: 0rem !important;
-            max-width: 100% !important;
-        }
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
+        .block-container { padding: 0rem !important; max-width: 100% !important; }
+        header {visibility: hidden;} footer {visibility: hidden;}
 
         .parallax-section {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 40px 20px;
+            background-attachment: fixed; background-position: center; background-repeat: no-repeat;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center;
+            justify-content: center; position: relative; padding: 40px 20px;
         }
 
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 1;
-        }
-
-        .content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: white;
-            padding: 20px;
-            max-width: 1000px;
-        }
+        .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); z-index: 1; }
+        .content { position: relative; z-index: 2; text-align: center; color: white; padding: 20px; max-width: 1000px; }
         
         .apple-title { font-size: 4.5rem; font-weight: 700; letter-spacing: -0.05rem; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
         .apple-subtitle { font-size: 1.8rem; font-weight: 600; color: #0071e3; margin-bottom: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
@@ -157,20 +136,22 @@ elif page == "📖 What to Expect":
         
         @media (max-width: 768px) { .apple-title { font-size: 3rem; } }
         </style>
-    """, unsafe_allow_html=True)
+    """
+    render_html(static_css)
 
-    # 2. DYNAMIC CSS (Safe f-string specifically isolated for injecting images only)
-    st.markdown(f"""
+    # 2. DYNAMIC CSS (Safe f-string for injecting images)
+    dynamic_css = f"""
         <style>
         .parallax-hero {{ background-image: url("data:image/png;base64,{img_hero}"); }}
         .parallax-sim {{ background-image: url("data:image/png;base64,{img_sim}"); }}
         .parallax-plan {{ background-image: url("data:image/png;base64,{img_plan}"); }}
         .parallax-treat {{ background-image: url("data:image/png;base64,{img_treat}"); }}
         </style>
-    """, unsafe_allow_html=True)
+    """
+    render_html(dynamic_css)
 
     # HERO SECTION
-    st.markdown("""
+    hero_section = """
         <div class="parallax-section parallax-hero">
             <div class="overlay" style="background: rgba(0,0,0,0.5);"></div>
             <div class="content">
@@ -179,10 +160,11 @@ elif page == "📖 What to Expect":
                 <div class="apple-body">Scroll down to explore your journey.</div>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    """
+    render_html(hero_section)
 
     # SIMULATION SECTION
-    st.markdown("""
+    sim_section = """
         <div class="parallax-section parallax-sim">
             <div class="overlay"></div>
             <div class="content">
@@ -206,10 +188,11 @@ elif page == "📖 What to Expect":
                 </div>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    """
+    render_html(sim_section)
 
     # PLANNING SECTION
-    st.markdown("""
+    plan_section = """
         <div class="parallax-section parallax-plan">
             <div class="overlay"></div>
             <div class="content">
@@ -229,10 +212,11 @@ elif page == "📖 What to Expect":
                 </div>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    """
+    render_html(plan_section)
 
     # TREATMENT SECTION
-    st.markdown("""
+    treat_section = """
         <div class="parallax-section parallax-treat">
             <div class="overlay"></div>
             <div class="content">
@@ -252,4 +236,5 @@ elif page == "📖 What to Expect":
                 </div>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    """
+    render_html(treat_section)
